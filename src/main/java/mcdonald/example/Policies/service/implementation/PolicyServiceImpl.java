@@ -7,6 +7,8 @@ import mcdonald.example.Policies.service.exceptions.DataAlreadyInDatabase;
 import mcdonald.example.Policies.service.exceptions.DataNotInDatabase;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+
 @Service
 class PolicyServiceImpl implements PolicyService {
     private final PolicyRepositoryPort policyRepositoryPort;
@@ -46,5 +48,10 @@ class PolicyServiceImpl implements PolicyService {
             -> new DataNotInDatabase(
             "policy",id
         ));
+    }
+
+    @Override
+    public Collection<Policy> findAll() {
+        return policyRepositoryPort.findAll();
     }
 }

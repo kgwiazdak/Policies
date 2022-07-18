@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/person")
@@ -63,5 +65,10 @@ public class PersonController {
     public ResponseEntity<Void> delete(@PathVariable int id){
         personService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<Collection<PersonResponse>> findAll(){
+        return ResponseEntity.ok(personService.findAll().stream().map(this::fromPersonToResponse).collect(Collectors.toList()));
     }
 }

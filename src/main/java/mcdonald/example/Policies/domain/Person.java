@@ -2,7 +2,7 @@ package mcdonald.example.Policies.domain;
 
 import java.util.Objects;
 
-public class Person {
+public class Person implements Entity {
     private int id;
     private int age;
     private String firstName;
@@ -37,6 +37,8 @@ public class Person {
     public int getId() {
         return id;
     }
+
+
 
     public void setId(int id) {
         this.id = id;
@@ -93,6 +95,5 @@ public class Person {
         this.address = address;
         this.phoneNumber = phoneNumber;
     }
-
 
 }

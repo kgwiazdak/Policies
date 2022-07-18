@@ -7,6 +7,8 @@ import mcdonald.example.Policies.service.exceptions.DataAlreadyInDatabase;
 import mcdonald.example.Policies.service.exceptions.DataNotInDatabase;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+
 @Service
 public class PersonServiceImp implements PersonService {
     private final PersonRepositoryPort personRepositoryPort;
@@ -47,4 +49,11 @@ public class PersonServiceImp implements PersonService {
             "person", id
         ));
     }
+
+    @Override
+    public Collection<Person> findAll() {
+        return personRepositoryPort.findAll();
+    }
+
+
 }

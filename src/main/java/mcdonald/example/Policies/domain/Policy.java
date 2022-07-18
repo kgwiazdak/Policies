@@ -1,6 +1,6 @@
 package mcdonald.example.Policies.domain;
 
-public class Policy {
+public class Policy implements Entity {
     private int id;
     private String name;
     private double price;
@@ -27,6 +27,7 @@ public class Policy {
     public int getId() {
         return id;
     }
+
 
     public Policy() {
     }

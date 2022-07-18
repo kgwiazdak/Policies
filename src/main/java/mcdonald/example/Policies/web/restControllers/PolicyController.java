@@ -10,58 +10,66 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 
 @RestController
 @RequestMapping("/api/policies")
 public class PolicyController {
 
-    private Policy fromRequestToPolicy(@RequestBody PolicyRequest request, @PathVariable int id){
+    private Policy fromRequestToPolicy(@RequestBody PolicyRequest request, @PathVariable int id) {
         return new Policy(
-            id,
-            request.getName(),
-            request.getPrice(),
-            request.getFirstName(),
-            request.getLastName()
+                id,
+                request.getName(),
+                request.getPrice(),
+                request.getFirstName(),
+                request.getLastName()
         );
     }
 
-    private PolicyResponse fromPolicyToResponse(Policy policy){
+    private PolicyResponse fromPolicyToResponse(Policy policy) {
         return new PolicyResponse(
-            policy.getId(),
-            policy.getName(),
-            policy.getPrice(),
-            policy.getFirstName(),
-            policy.getLastName()
+                policy.getId(),
+                policy.getName(),
+                policy.getPrice(),
+                policy.getFirstName(),
+                policy.getLastName()
         );
     }
 
     private final PolicyService policyService;
     private final IdGenerator idGenerator;
+
     public PolicyController(PolicyService policyServiceImp, IdGenerator idGenerator) {
         this.policyService = policyServiceImp;
         this.idGenerator = idGenerator;
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<PolicyResponse> get(@PathVariable int id){
+    public ResponseEntity<PolicyResponse> get(@PathVariable int id) {
         return new ResponseEntity<>(fromPolicyToResponse(policyService.get(id)), HttpStatus.OK);
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<Void> update(@RequestBody @Valid PolicyRequest request, @PathVariable int id){
+    public ResponseEntity<Void> update(@RequestBody @Valid PolicyRequest request, @PathVariable int id) {
         policyService.update(fromRequestToPolicy(request, id));
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping
-    public ResponseEntity<PolicyResponse> post(@RequestBody @Valid PolicyRequest request){
-        return new ResponseEntity<>(fromPolicyToResponse( policyService.add(fromRequestToPolicy(request, idGenerator.generatePolicyID()))), HttpStatus.CREATED);
+    public ResponseEntity<PolicyResponse> post(@RequestBody @Valid PolicyRequest request) {
+        return new ResponseEntity<>(fromPolicyToResponse(policyService.add(fromRequestToPolicy(request, idGenerator.generatePolicyID()))), HttpStatus.CREATED);
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<Void> delete(@PathVariable int id){
+    public ResponseEntity<Void> delete(@PathVariable int id) {
         policyService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<Collection<PolicyResponse>> findAll() {
+        return ResponseEntity.ok(policyService.findAll().stream().map(this::fromPolicyToResponse).collect(Collectors.toList()));
     }
 }
