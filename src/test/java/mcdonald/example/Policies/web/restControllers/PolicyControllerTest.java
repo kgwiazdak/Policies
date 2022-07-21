@@ -4,6 +4,7 @@ import mcdonald.example.Policies.config.PolicyAndPersonExceptionHandler;
 import mcdonald.example.Policies.domain.Policy;
 import mcdonald.example.Policies.service.PolicyService;
 import mcdonald.example.Policies.service.exceptions.DataNotInDatabase;
+import mcdonald.example.Policies.testutil.TestDataGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,32 +45,32 @@ class PolicyControllerTest {
     void shouldGetPolicyIfPolicyIsInDatabase() throws Exception {
         // given
         final int id = 1;
-        String outputJson = "{" + "\"id\": 1," + "  \"name\": \"myPolicy\"," + "  \"price\": 18," + "  \"firstName\": \"Jan\"," + "  \"lastName\": \"Kowalski\"" + "}";
-        Policy policy = new Policy(1, "myPolicy", 18, "Jan", "Kowalski");
+        String outputJson = TestDataGenerator.TEST_JSON_POLICY_ONE;
+        Policy policy = TestDataGenerator.TEST_POLICY_ONE;
         when(policyService.get(1)).thenReturn(policy);
         // when & then
-        mockMvc.perform(get("/api/policies/{id}", id).accept(MediaType.APPLICATION_JSON)).andExpect(content().json(outputJson)).andExpect(status().isOk());
+        mockMvc.perform(get(TestDataGenerator.TEST_POLICY_URL_WITH_ID, id).accept(MediaType.APPLICATION_JSON)).andExpect(content().json(outputJson)).andExpect(status().isOk());
     }
 
     @Test
     void shouldUpdatePolicy() throws Exception {
         // given
         final int id = 1;
-        String inputJson = "{" + "  \"name\": \"myPolicy\"," + "  \"price\": 18," + "  \"firstName\": \"Jan\"," + "  \"lastName\": \"Kowalski\"" + "}";
-        Policy policy = new Policy(id, "myPolicy", 18, "Jan", "Kowalski");
+        String inputJson = TestDataGenerator.TEST_JSON_POLICY_WITHOUT_ID;
+        Policy policy = TestDataGenerator.TEST_POLICY_ONE;
         // when & then
-        mockMvc.perform(put("/api/policies/{id}", id).contentType(MediaType.APPLICATION_JSON).content(inputJson)).andExpect(status().isNoContent());
+        mockMvc.perform(put(TestDataGenerator.TEST_POLICY_URL_WITH_ID, id).contentType(MediaType.APPLICATION_JSON).content(inputJson)).andExpect(status().isNoContent());
     }
 
     @Test
     void shouldReturn404WhenUpdateThrowsDataNotInDatabaseException() throws Exception {
         // given
         final int id = 1;
-        String inputJson = "{\"name\": \"myPolicy\"," + "\"price\": 18," + "  \"firstName\": \"Jan\"," + "  \"lastName\": \"Kowalski\"" + "}";
-        Policy policy = new Policy(id, "myPolicy", 18, "Jan", "Kowalski");
+        String inputJson = TestDataGenerator.TEST_JSON_POLICY_WITHOUT_ID;
+        Policy policy = TestDataGenerator.TEST_POLICY_ONE;
         doThrow(new DataNotInDatabase("Sth wrong", id)).when(policyService).update(policy);
         // when & then
-        mockMvc.perform(put("/api/policies/{id}", id).contentType(MediaType.APPLICATION_JSON).content(inputJson)).andExpect(status().isNotFound());
+        mockMvc.perform(put(TestDataGenerator.TEST_POLICY_URL_WITH_ID, id).contentType(MediaType.APPLICATION_JSON).content(inputJson)).andExpect(status().isNotFound());
         verify(policyService).update(policy);
     }
 
@@ -77,14 +78,13 @@ class PolicyControllerTest {
     @Test
     void shouldPostPolicy() throws Exception {
         // given
-        String inputJson = "{\"name\": \"myPolicy\"," + " \"price\": 18," + "  \"firstName\": \"Jan\"," + "  \"lastName\": \"Kowalski\"" + "}";
-        Policy policyExpectedInput = new Policy(-1, "myPolicy", 18, "Jan", "Kowalski");
-        Policy policyExpectedOutput = new Policy(2, "myPolicy", 18, "Jan", "Kowalski");
-        String jsonExpectedOutput = "{\"id\": 2," + " \"name\": myPolicy," + " \"price\": 18," + "  \"firstName\": \"Jan\"," + "  \"lastName\": \"Kowalski\"" + "}";
-
+        String inputJson = TestDataGenerator.TEST_JSON_POLICY_WITHOUT_ID;
+        Policy policyExpectedInput = TestDataGenerator.TEST_POLICY_DEFAULT_ID;
+        Policy policyExpectedOutput = TestDataGenerator.TEST_POLICY_TWO;
+        String jsonExpectedOutput = TestDataGenerator.TEST_JSON_POLICY_TWO;
         when(policyService.add(policyExpectedInput)).thenReturn(policyExpectedOutput);
         // when & then
-        mockMvc.perform(post("/api/policies").contentType(MediaType.APPLICATION_JSON).content(inputJson)).andExpect(status().isCreated())
+        mockMvc.perform(post(TestDataGenerator.TEST_POLICY_URL_WITHOUT_ID).contentType(MediaType.APPLICATION_JSON).content(inputJson)).andExpect(status().isCreated())
                 .andExpect(content().json(jsonExpectedOutput));
     }
 
@@ -92,11 +92,11 @@ class PolicyControllerTest {
     @Test
     void shouldDeletePolicy() throws Exception {
         // given
-        int id = 0;
-        Policy policy = new Policy(0, "myPolicy", 18, "Jan", "Kowalski");
+        int id = 1;
+        Policy policy = TestDataGenerator.TEST_POLICY_ONE;
         when(policyService.get(id)).thenReturn(policy);
         // when & then
-        mockMvc.perform(delete("/api/policies/{id}", id)).andExpect(status().isNoContent());
+        mockMvc.perform(delete(TestDataGenerator.TEST_POLICY_URL_WITH_ID, id)).andExpect(status().isNoContent());
     }
 
     @Test
@@ -105,7 +105,7 @@ class PolicyControllerTest {
         int id = 0;
         doThrow(new DataNotInDatabase("Sth wrong", id)).when(policyService).delete(id);
         // when & then
-        mockMvc.perform(delete("/api/policies/{id}", id)).andExpect(status().isNotFound());
+        mockMvc.perform(delete(TestDataGenerator.TEST_POLICY_URL_WITH_ID, id)).andExpect(status().isNotFound());
         verify(policyService).delete(id);
     }
 
@@ -113,10 +113,10 @@ class PolicyControllerTest {
     @Test
     void findAll() throws Exception {
         // given
-        String outputJson = "[{\"id\": 1," + " \"name\": myPolicy," + " \"price\": 18," + "  \"firstName\": \"Jan\"," + "  \"lastName\": \"Kowalski\"" + "}]";
-        Policy policy = new Policy(1, "myPolicy", 18, "Jan", "Kowalski");
+        String outputJson = TestDataGenerator.TEST_JSON_POLICY_LIST;
+        Policy policy = TestDataGenerator.TEST_POLICY_ONE;
         when(policyService.findAll()).thenReturn(List.of(policy));
         // when & then
-        mockMvc.perform(get("/api/policies")).andExpect(status().isOk()).andExpect(content().json(outputJson));
+        mockMvc.perform(get(TestDataGenerator.TEST_POLICY_URL_WITHOUT_ID)).andExpect(status().isOk()).andExpect(content().json(outputJson));
     }
 }

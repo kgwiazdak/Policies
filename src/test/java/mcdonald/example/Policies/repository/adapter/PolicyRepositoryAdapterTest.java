@@ -4,9 +4,7 @@ import com.github.fppt.jedismock.RedisServer;
 import com.github.fppt.jedismock.server.ServiceOptions;
 import mcdonald.example.Policies.domain.Policy;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -37,6 +35,16 @@ class PolicyRepositoryAdapterTest {
     @AfterAll
     static void stopRedis() throws IOException {
         redisServer.stop();
+    }
+
+    @BeforeEach
+    void clearRecords() {
+        jedis.flushAll();
+    }
+
+    @AfterEach
+    void clearRecordsAfterRun() {
+        jedis.flushAll();
     }
 
     @Test

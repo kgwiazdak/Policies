@@ -97,12 +97,21 @@ class PersonServiceImpTest {
     }
 
     @Test
-    void shouldThrowAnExceptionIfPersonDeosNotExistInDatabase() {
+    void shouldThrowAnExceptionWhileDeletingIfPersonDeosNotExistInDatabase() {
         // given
         int id = 0;
         when(personRepositoryPort.get(0)).thenReturn(Optional.empty());
         // when && then
         Assertions.assertThatThrownBy(() -> personServiceImpsSut.delete(id)).isInstanceOf(DataNotInDatabase.class);
+    }
+
+    @Test
+    void shouldThrowAnExceptionWhileGetingIfPersonDeosNotExistInDatabase() {
+        // given
+        int id = 0;
+        when(personRepositoryPort.get(0)).thenReturn(Optional.empty());
+        // when && then
+        Assertions.assertThatThrownBy(() -> personServiceImpsSut.get(id)).isInstanceOf(DataNotInDatabase.class);
     }
 
     @Test

@@ -117,6 +117,15 @@ class PolicyServiceImpTest {
         Assertions.assertThat(outputPolicy).isEqualTo(expectedOutputpolicy);
     }
 
+    @Test
+    void shouldThrowAnExceptionWhileGetingIfPolicyDeosNotExistInDatabase() {
+        // given
+        int id = 0;
+        when(policyRepositoryPort.get(0)).thenReturn(Optional.empty());
+        // when && then
+        Assertions.assertThatThrownBy(() -> policyServiceImpsSut.get(id)).isInstanceOf(DataNotInDatabase.class);
+    }
+
 
     @Test
     void shouldReturnAllPeopleInDatabase() {

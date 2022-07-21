@@ -11,7 +11,7 @@ import redis.clients.jedis.Jedis;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class IdGeneratorTest {
+class IdGeneratorUnitTest {
     @InjectMocks
     private IdGenerator idGeneratorSut;
     @Mock
