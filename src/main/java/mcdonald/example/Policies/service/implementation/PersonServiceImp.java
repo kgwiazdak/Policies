@@ -19,34 +19,38 @@ public class PersonServiceImp implements PersonService {
         this.idGenerator = idGenerator;
     }
 
-    public Person add(Person person)  {
+    public Person add(Person person) {
+        person.setId(idGenerator.generatePersonID());
         if (personRepositoryPort.get(person.getId()).isPresent()) {
             throw new DataAlreadyInDatabase(
-                "person", person.getId()
+                    "person", person.getId()
             );
         }
         return personRepositoryPort.save(person);
     }
+
     public void update(Person person) {
-        if (personRepositoryPort.get(person.getId()).isEmpty()){
+        if (personRepositoryPort.get(person.getId()).isEmpty()) {
             throw new DataNotInDatabase(
-                "person", person.getId()
+                    "person", person.getId()
             );
         }
         personRepositoryPort.save(person);
     }
+
     public void delete(int id) {
-        if (personRepositoryPort.get(id).isEmpty()){
+        if (personRepositoryPort.get(id).isEmpty()) {
             throw new DataNotInDatabase(
-                "person",id
+                    "person", id
             );
         }
+        personRepositoryPort.delete(id);
     }
 
-    public Person get(int id){
+    public Person get(int id) {
         return personRepositoryPort.get(id).orElseThrow(()
-            -> new DataNotInDatabase(
-            "person", id
+                -> new DataNotInDatabase(
+                "person", id
         ));
     }
 

@@ -1,5 +1,7 @@
 package mcdonald.example.Policies.domain;
 
+import java.util.Objects;
+
 public class Policy implements Entity {
     private int id;
     private String name;
@@ -7,6 +9,17 @@ public class Policy implements Entity {
 
     private String firstName;
     private String lastName;
+
+    public Policy() {
+    }
+
+    public Policy(int id, String name, double price, String firstName, String lastName) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -28,12 +41,21 @@ public class Policy implements Entity {
         return id;
     }
 
-
-    public Policy() {
-    }
-
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Policy policy = (Policy) o;
+        return id == policy.id && Double.compare(policy.price, price) == 0 && Objects.equals(name, policy.name) && Objects.equals(firstName, policy.firstName) && Objects.equals(lastName, policy.lastName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, price, firstName, lastName);
     }
 
     public String getName() {
@@ -50,13 +72,5 @@ public class Policy implements Entity {
 
     public void setPrice(double price) {
         this.price = price;
-    }
-
-    public Policy(int id, String name, double price, String firstName, String lastName) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.firstName = firstName;
-        this.lastName = lastName;
     }
 }

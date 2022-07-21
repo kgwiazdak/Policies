@@ -18,6 +18,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/policies")
 public class PolicyController {
 
+    private final PolicyService policyService;
+    private final IdGenerator idGenerator;
+
+    public PolicyController(PolicyService policyServiceImp, IdGenerator idGenerator) {
+        this.policyService = policyServiceImp;
+        this.idGenerator = idGenerator;
+    }
+
     private Policy fromRequestToPolicy(@RequestBody PolicyRequest request, @PathVariable int id) {
         return new Policy(
                 id,
@@ -38,14 +46,6 @@ public class PolicyController {
         );
     }
 
-    private final PolicyService policyService;
-    private final IdGenerator idGenerator;
-
-    public PolicyController(PolicyService policyServiceImp, IdGenerator idGenerator) {
-        this.policyService = policyServiceImp;
-        this.idGenerator = idGenerator;
-    }
-
     @GetMapping(path = "/{id}")
     public ResponseEntity<PolicyResponse> get(@PathVariable int id) {
         return new ResponseEntity<>(fromPolicyToResponse(policyService.get(id)), HttpStatus.OK);
@@ -59,7 +59,7 @@ public class PolicyController {
 
     @PostMapping
     public ResponseEntity<PolicyResponse> post(@RequestBody @Valid PolicyRequest request) {
-        return new ResponseEntity<>(fromPolicyToResponse(policyService.add(fromRequestToPolicy(request, idGenerator.generatePolicyID()))), HttpStatus.CREATED);
+        return new ResponseEntity<>(fromPolicyToResponse(policyService.add(fromRequestToPolicy(request, -1))), HttpStatus.CREATED);
     }
 
     @DeleteMapping(path = "/{id}")

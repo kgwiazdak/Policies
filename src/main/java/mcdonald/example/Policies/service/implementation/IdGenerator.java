@@ -12,12 +12,11 @@ public class IdGenerator {
         this.jedis = jedis;
     }
 
-
-    public int generatePolicyID(){
+    public int generatePolicyID() {
         return (int) jedis.incr("maxPolicyId");
     }
 
-    public int generatePersonID(){
+    public int generatePersonID() {
         return (int) jedis.incr("maxPersonId");
     }
 
